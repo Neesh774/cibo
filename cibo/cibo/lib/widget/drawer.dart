@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cibo/routes/Routes.dart';
-import 'package:cibo/module/events/grocery_lists_list_view.dart';
 
 //C:\Users\kkanc\AndroidStudioProjects\cibo\cibo
 class AppDrawer extends StatelessWidget {

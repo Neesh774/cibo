@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "150771279977",
+    "firebase_url": "https://cibo-9186d.firebaseio.com",
+    "project_id": "cibo-9186d",
+    "storage_bucket": "cibo-9186d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150771279977:android:6aaf16b2be55e7b4491af8",
+        "android_client_info": {
+          "package_name": "org.RiverRipple.cibo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150771279977-f7olkkpag0cgj0pnldk1hols40jho6iq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-voEAEHFo4sc3cWAzMuK2hDSR66EoZUk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150771279977-f7olkkpag0cgj0pnldk1hols40jho6iq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
