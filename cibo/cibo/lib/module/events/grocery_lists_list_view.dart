@@ -52,48 +52,31 @@ class _ListsPageState extends State<ListsPage>
             stream: Firestore.instance.collection("grocerylists").snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                debugPrint(snapshot.data.documents.length.toString());
-                return ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data.documents.length,
-                    separatorBuilder: (_, __) =>
-                        const Divider(thickness: 2, height: 4.0),
-                    itemBuilder: (context, index) {
-                      DocumentSnapshot documentSnapshot =
-                          snapshot.data.documents[index];
-                      // String title = documentSnapshot['title'];
-                      // ListTile(
-                      //   dense: true,
-                      //   trailing: const Icon(Icons.arrow_forward_ios),
-                      //   title: Text(
-                      //     title,
-                      //     style: GoogleFonts.biryani(fontSize: 17.0),
-                      //   ),
-                      //   onTap: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //           builder: (context) => GroceryListPage(
-                      //                 listTitle: "$title",
-                      //               )),
-                      //     );
-                      //   },
-                      // );
-                      return ListTile(
-                        title: Text(documentSnapshot['title'],
-                            style: GoogleFonts.biryani(fontSize: 17.0)),
-                        dense: true,
-                        trailing: const Icon(Icons.arrow_forward_ios),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GroceryListPage(
-                                        listTitle: documentSnapshot['title'],
-                                      )));
-                        },
-                      );
-                    });
+                return Container(
+                    child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.documents.length,
+                        separatorBuilder: (_, __) =>
+                            const Divider(thickness: 2, height: 4.0),
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot documentSnapshot =
+                              snapshot.data.documents[index];
+                          return ListTile(
+                            title: Text(documentSnapshot['title'],
+                                style: GoogleFonts.biryani(fontSize: 17.0)),
+                            dense: true,
+                            trailing: const Icon(Icons.arrow_forward_ios),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GroceryListPage(
+                                            listTitle:
+                                                documentSnapshot['title'],
+                                          )));
+                            },
+                          );
+                        }));
               }
             }));
   }
@@ -113,7 +96,6 @@ class NewGroceryList extends State<NewGroceryListWidget> {
   List<int> numfinalIngs = [];
   String _reminderDay = "Sunday";
   Widget build(BuildContext context) {
-    debugPrint(curTitle.text);
     return Scaffold(
         appBar: AppBar(
           title: Text("New Grocery List"),
@@ -129,9 +111,7 @@ class NewGroceryList extends State<NewGroceryListWidget> {
           actions: <Widget>[
             IconButton(
               icon: new Icon(Icons.check, color: Colors.white),
-              onPressed: () {
-                debugPrint('$_newListIngs');
-                debugPrint('$_newlistnumIngs');
+              onPressed: () async {
                 if (_newListIngs.isNotEmpty &&
                     _newlistnumIngs.isNotEmpty &&
                     (_newListIngs[0].text?.isNotEmpty ??
@@ -139,6 +119,10 @@ class NewGroceryList extends State<NewGroceryListWidget> {
                     (_newlistnumIngs[0].text?.isNotEmpty ??
                         false) && //What if the Strings are null?
                     curTitle.text.isNotEmpty) {
+                  _newListIngs.clear();
+                  _newlistnumIngs.clear();
+                  debugPrint('$_newListIngs');
+                  debugPrint("$_newlistnumIngs");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ListsPage()),
@@ -157,6 +141,8 @@ class NewGroceryList extends State<NewGroceryListWidget> {
                   }
                   GroceryList cur = GroceryList(
                       curTitle.text, _reminderDay, tempIngs, tempNumIngs);
+                  final db = Firestore.instance;
+                  await db.collection('grocerylists').add({'title': cur.title});
                 } else {
                   Alert(
                           context: context,
@@ -222,7 +208,6 @@ class NewGroceryList extends State<NewGroceryListWidget> {
                       setState(() {
                         countings++;
                       });
-                      debugPrint('$countings');
                     },
                   )
                 ],
