@@ -61,22 +61,36 @@ class _ListsPageState extends State<ListsPage>
                     itemBuilder: (context, index) {
                       DocumentSnapshot documentSnapshot =
                           snapshot.data.documents[index];
-                      String title = documentSnapshot['title'];
-                      ListTile(
+                      // String title = documentSnapshot['title'];
+                      // ListTile(
+                      //   dense: true,
+                      //   trailing: const Icon(Icons.arrow_forward_ios),
+                      //   title: Text(
+                      //     title,
+                      //     style: GoogleFonts.biryani(fontSize: 17.0),
+                      //   ),
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => GroceryListPage(
+                      //                 listTitle: "$title",
+                      //               )),
+                      //     );
+                      //   },
+                      // );
+                      return ListTile(
+                        title: Text(documentSnapshot['title'],
+                            style: GoogleFonts.biryani(fontSize: 17.0)),
                         dense: true,
                         trailing: const Icon(Icons.arrow_forward_ios),
-                        title: Text(
-                          title,
-                          style: GoogleFonts.biryani(fontSize: 17.0),
-                        ),
                         onTap: () {
                           Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => GroceryListPage(
-                                      listTitle: "$title",
-                                    )),
-                          );
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GroceryListPage(
+                                        listTitle: documentSnapshot['title'],
+                                      )));
                         },
                       );
                     });
