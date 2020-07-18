@@ -142,7 +142,18 @@ class NewGroceryList extends State<NewGroceryListWidget> {
                   GroceryList cur = GroceryList(
                       curTitle.text, _reminderDay, tempIngs, tempNumIngs);
                   final db = Firestore.instance;
-                  await db.collection('grocerylists').add({'title': cur.title});
+                  debugPrint('$tempIngs');
+                  debugPrint('$tempNumIngs');
+                  await db.collection('grocerylists').add({
+                    'title': cur.title,
+                    'reminderDay': cur._reminderDay,
+                    'ingredients': tempIngs,
+                    'numIngs': tempNumIngs
+                  });
+                  curTitle.clear();
+                  _reminderDay = "";
+                  finalIngs.clear();
+                  numfinalIngs.clear();
                 } else {
                   Alert(
                           context: context,
@@ -242,8 +253,8 @@ class GroceryListPage extends StatelessWidget {
 }
 
 class GroceryList {
-  String title = "";
-  String _reminderDay = "";
+  var title = "";
+  var _reminderDay = "";
   List<String> ingredients = [];
   List<int> numIngs = [];
   GroceryList(
