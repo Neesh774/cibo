@@ -15,14 +15,23 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
-
+module:
+  androidX: true
 dependencies:
   intl: ^0.15.7
   http: ^0.12.0+2
   flutter:
     sdk: flutter
   google_fonts: ^1.1.0
-
+  firebase_core: ^0.4.0+9
+  firebase_analytics: ^5.0.2
+  firebase_auth: ^0.14.0+5
+  cloud_firestore: ^0.13.7
+  firebase_storage: ^3.1.6
+  path_provider: ^1.6.11
+  file_picker: ^1.1.1
+  rflutter_alert: ^1.0.3
+  json_annotation: <latest_version>
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -32,6 +41,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: <latest_version>
+  json_serializable: <latest_version>
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

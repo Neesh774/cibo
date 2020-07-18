@@ -1,4 +1,4 @@
-package org.fabiomsr.step5;
+package org.RiverRipple.cibo;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

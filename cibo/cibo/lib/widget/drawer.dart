@@ -34,20 +34,23 @@ class AppDrawer extends StatelessWidget {
     return DrawerHeader(
         margin: EdgeInsets.zero,
         padding: EdgeInsets.zero,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                fit: BoxFit.fill,
-                image: AssetImage('res/images/app_background.png'))),
-        child: Stack(children: <Widget>[
-          Positioned(
-              bottom: 75.0,
-              left: 30.0,
-              child: Text("What would you like to eat today?",
-                  style: TextStyle(
-                      color: Color.fromRGBO(67, 76, 85, 100),
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w500))),
-        ]));
+        child: Container(
+            color: Colors.blueAccent[100],
+            child: Stack(children: <Widget>[
+              Container(
+                padding: EdgeInsets.fromLTRB(15, 15, 300, 20),
+                child:
+                    Icon(Icons.account_circle, size: 90, color: Colors.black),
+              ),
+              Positioned(
+                  bottom: 25.0,
+                  left: 22.0,
+                  child: Text("What would you like to eat today?",
+                      style: TextStyle(
+                          color: Color.fromRGBO(0, 0, 0, 100),
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500))),
+            ])));
   }
 
   Widget _createDrawerItem(
@@ -63,6 +66,25 @@ class AppDrawer extends StatelessWidget {
         ],
       ),
       onTap: onTap,
+    );
+  }
+}
+
+class UserHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("User Home Page"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            // Navigate back to first route when tapped.
+          },
+          child: Text('Go back!'),
+        ),
+      ),
     );
   }
 }

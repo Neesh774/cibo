@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cibo/widget/drawer.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 //C:\Users\kkanc\AndroidStudioProjects\cibo\cibo
+List<TextEditingController> _newListIngs = [];
+List<TextEditingController> _newlistnumIngs = [];
+int _numFiles = 1;
+List<String> listFileNames = ['GroceryList_1'];
 
 class ListsPage extends StatefulWidget {
   static const String routeName = '/grocery_lists';
@@ -74,15 +83,13 @@ class NewGroceryListWidget extends StatefulWidget {
 
 class NewGroceryList extends State<NewGroceryListWidget> {
   List<String> tempIngredients;
-  final _controllerList = <TextEditingController>[];
-  final _numControllerList = <TextEditingController>[];
-
-  final myController = new TextEditingController();
-  int countings = 1;
-  List<TextEditingController> ingControllers;
-  String _currentSelection = "Sunday";
+  final curTitle = new TextEditingController();
+  int countings = 0;
+  List<String> finalIngs = [];
+  List<String> numfinalIngs = [];
+  String _reminderDay = "Sunday";
   Widget build(BuildContext context) {
-    debugPrint(myController.text);
+    debugPrint(curTitle.text);
     return Scaffold(
         appBar: AppBar(
           title: Text("New Grocery List"),
@@ -97,8 +104,43 @@ class NewGroceryList extends State<NewGroceryListWidget> {
           ),
           actions: <Widget>[
             IconButton(
-                icon: new Icon(Icons.check, color: Colors.white),
-                onPressed: () {})
+              icon: new Icon(Icons.check, color: Colors.white),
+              onPressed: () {
+                debugPrint('$_newListIngs');
+                debugPrint('$_newlistnumIngs');
+                if (_newListIngs.isNotEmpty &&
+                    _newlistnumIngs.isNotEmpty &&
+                    (_newListIngs[0].text?.isNotEmpty ??
+                        false) && //What if the Strings are null?
+                    (_newlistnumIngs[0].text?.isNotEmpty ??
+                        false) && //What if the Strings are null?
+                    curTitle.text.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListsPage()),
+                  );
+                  for (int i = 0; i < _newListIngs.length; i++) {
+                    finalIngs.add(_newListIngs[i].text);
+                    numfinalIngs.add(_newlistnumIngs[i].text);
+                  }
+                  List<String> tempIngs = [];
+                  List<String> tempNumIngs = [];
+                  for (int i = 0; i < finalIngs.length; i++) {
+                    tempIngs.add(finalIngs[i]);
+                    tempNumIngs.add(numfinalIngs[i]);
+                  }
+                  GroceryList cur = GroceryList(
+                      curTitle.text, _reminderDay, tempIngs, tempNumIngs);
+                  StorageReference storageReference = FirebaseStorage().ref();
+                } else {
+                  Alert(
+                          context: context,
+                          title: "Missing Ingredients.",
+                          desc: "Please fill all blank spaces.")
+                      .show();
+                }
+              },
+            )
           ],
         ),
         drawer: AppDrawer(),
@@ -107,7 +149,7 @@ class NewGroceryList extends State<NewGroceryListWidget> {
           child: Column(
             children: <Widget>[
               TextField(
-                controller: myController,
+                controller: curTitle,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Title',
@@ -121,7 +163,7 @@ class NewGroceryList extends State<NewGroceryListWidget> {
                   ),
                   DropdownButton<String>(
                     //Don't forget to pass your variable to the current value
-                    value: _currentSelection,
+                    value: _reminderDay,
                     items: <String>[
                       'Sunday',
                       'Monday',
@@ -138,7 +180,7 @@ class NewGroceryList extends State<NewGroceryListWidget> {
                     }).toList(),
                     onChanged: (newValue) {
                       setState(() {
-                        _currentSelection = newValue;
+                        _reminderDay = newValue;
                       });
                     },
                   ),
@@ -190,13 +232,15 @@ class GroceryListPage extends StatelessWidget {
 }
 
 class GroceryList {
-  final String title;
-  final String reminderDay;
-  final List<TextEditingController> ingredients;
+  String title = "";
+  String _reminderDay = "";
+  List<String> ingredients = [];
+  List<String> numIngs = [];
   GroceryList(
     this.title,
-    this.reminderDay,
+    this._reminderDay,
     this.ingredients,
+    this.numIngs,
   );
 }
 
@@ -251,6 +295,8 @@ class _ListOfIngsState extends State<ListOfIngsWidget> {
       ));
       _controllerList.add(controller);
       _numControllerList.add(numcontroller);
+      _newListIngs.add(controller);
+      _newlistnumIngs.add(numcontroller);
     }
     super.initState();
   }
@@ -263,4 +309,32 @@ class _ListOfIngsState extends State<ListOfIngsWidget> {
       ),
     );
   }
+}
+
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
+
+  return directory.path;
+}
+
+Future<File> get _localFile async {
+  final path = await _localPath;
+  return File('$path/grocery_list.txt');
+}
+
+Future<File> writeCounter(GroceryList list) async {
+  final  grocerylistfile = await _localFile;
+  // Write the file.
+  final title = list.title;
+  final day = list._reminderDay;
+  final ingstexts = list.ingredients;
+  final numIngs = list.numIngs;
+  String ings;
+  for (int i = 0; i < ingstexts.length; i++) {
+    ings += ingstexts[i] + '@#%' + numIngs[i] + '@%';
+  }
+  _numFiles++;
+  listFileNames.add('GroceryList_$_numFiles')
+  return grocerylistfile
+      .writeAsString('title: $title, day: $day, ingredients: $ings');
 }
