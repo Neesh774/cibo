@@ -53,34 +53,33 @@ class _ListsPageState extends State<ListsPage>
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 debugPrint(snapshot.data.documents.length.toString());
-                return Container(
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data.documents.length + 1,
-                        separatorBuilder: (_, __) =>
-                            const Divider(thickness: 2, height: 4.0),
-                        itemBuilder: (context, index) {
-                          DocumentSnapshot documentSnapshot =
-                              snapshot.data.documents[index];
-                          String title = documentSnapshot['title'];
-                          ListTile(
-                            dense: true,
-                            trailing: const Icon(Icons.arrow_forward_ios),
-                            title: Text(
-                              title,
-                              style: GoogleFonts.biryani(fontSize: 17.0),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => GroceryListPage(
-                                          listTitle: "$title",
-                                        )),
-                              );
-                            },
+                return ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data.documents.length,
+                    separatorBuilder: (_, __) =>
+                        const Divider(thickness: 2, height: 4.0),
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot documentSnapshot =
+                          snapshot.data.documents[index];
+                      String title = documentSnapshot['title'];
+                      ListTile(
+                        dense: true,
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                        title: Text(
+                          title,
+                          style: GoogleFonts.biryani(fontSize: 17.0),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => GroceryListPage(
+                                      listTitle: "$title",
+                                    )),
                           );
-                        }));
+                        },
+                      );
+                    });
               }
             }));
   }
