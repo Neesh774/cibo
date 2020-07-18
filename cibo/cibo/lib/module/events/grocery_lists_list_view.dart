@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cibo/widget/drawer.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 //C:\Users\kkanc\AndroidStudioProjects\cibo\cibo
 List<TextEditingController> _newListIngs = [];
 List<TextEditingController> _newlistnumIngs = [];
-int _numFiles = 1;
 List<String> listFileNames = ['GroceryList_1'];
 
 class ListsPage extends StatefulWidget {
@@ -31,47 +31,58 @@ class _ListsPageState extends State<ListsPage>
   var numGroceryList = 5;
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Grocery Lists"),
-        actions: <Widget>[
-          IconButton(
-            iconSize: 27.0,
-            icon: const Icon(Icons.add, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NewGroceryListWidget()),
-              );
-            },
-          )
-        ],
-      ),
-      drawer: AppDrawer(),
-      body: ListView.separated(
-        itemCount: groceryListNames.length,
-        separatorBuilder: (_, __) => const Divider(thickness: 2, height: 4.0),
-        itemBuilder: (context, index) {
-          final data = groceryListNames[index];
-          return ListTile(
-            dense: true,
-            trailing: const Icon(Icons.arrow_forward_ios),
-            title: Text(
-              data,
-              style: GoogleFonts.biryani(fontSize: 17.0),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => GroceryListPage(
-                          listTitle: "$data",
-                        )),
-              );
-            },
-          );
-        },
-      ),
-    );
+        appBar: AppBar(
+          title: Text("Grocery Lists"),
+          actions: <Widget>[
+            IconButton(
+              iconSize: 27.0,
+              icon: const Icon(Icons.add, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NewGroceryListWidget()),
+                );
+              },
+            )
+          ],
+        ),
+        drawer: AppDrawer(),
+        body: StreamBuilder(
+            stream: Firestore.instance.collection("grocerylists").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                debugPrint(snapshot.data.documents.length.toString());
+                return Container(
+                    child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.documents.length + 1,
+                        separatorBuilder: (_, __) =>
+                            const Divider(thickness: 2, height: 4.0),
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot documentSnapshot =
+                              snapshot.data.documents[index];
+                          String title = documentSnapshot['title'];
+                          ListTile(
+                            dense: true,
+                            trailing: const Icon(Icons.arrow_forward_ios),
+                            title: Text(
+                              title,
+                              style: GoogleFonts.biryani(fontSize: 17.0),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => GroceryListPage(
+                                          listTitle: "$title",
+                                        )),
+                              );
+                            },
+                          );
+                        }));
+              }
+            }));
   }
 }
 
@@ -86,7 +97,7 @@ class NewGroceryList extends State<NewGroceryListWidget> {
   final curTitle = new TextEditingController();
   int countings = 0;
   List<String> finalIngs = [];
-  List<String> numfinalIngs = [];
+  List<int> numfinalIngs = [];
   String _reminderDay = "Sunday";
   Widget build(BuildContext context) {
     debugPrint(curTitle.text);
@@ -121,17 +132,18 @@ class NewGroceryList extends State<NewGroceryListWidget> {
                   );
                   for (int i = 0; i < _newListIngs.length; i++) {
                     finalIngs.add(_newListIngs[i].text);
-                    numfinalIngs.add(_newlistnumIngs[i].text);
+                    int tempnum = int.parse(_newlistnumIngs[i].text);
+                    numfinalIngs.add(tempnum);
                   }
                   List<String> tempIngs = [];
-                  List<String> tempNumIngs = [];
+                  List<int> tempNumIngs = [];
                   for (int i = 0; i < finalIngs.length; i++) {
                     tempIngs.add(finalIngs[i]);
-                    tempNumIngs.add(numfinalIngs[i]);
+                    int tempnum = numfinalIngs[i];
+                    tempNumIngs.add(tempnum);
                   }
                   GroceryList cur = GroceryList(
                       curTitle.text, _reminderDay, tempIngs, tempNumIngs);
-                  StorageReference storageReference = FirebaseStorage().ref();
                 } else {
                   Alert(
                           context: context,
@@ -235,7 +247,7 @@ class GroceryList {
   String title = "";
   String _reminderDay = "";
   List<String> ingredients = [];
-  List<String> numIngs = [];
+  List<int> numIngs = [];
   GroceryList(
     this.title,
     this._reminderDay,
@@ -309,32 +321,4 @@ class _ListOfIngsState extends State<ListOfIngsWidget> {
       ),
     );
   }
-}
-
-Future<String> get _localPath async {
-  final directory = await getApplicationDocumentsDirectory();
-
-  return directory.path;
-}
-
-Future<File> get _localFile async {
-  final path = await _localPath;
-  return File('$path/grocery_list.txt');
-}
-
-Future<File> writeCounter(GroceryList list) async {
-  final  grocerylistfile = await _localFile;
-  // Write the file.
-  final title = list.title;
-  final day = list._reminderDay;
-  final ingstexts = list.ingredients;
-  final numIngs = list.numIngs;
-  String ings;
-  for (int i = 0; i < ingstexts.length; i++) {
-    ings += ingstexts[i] + '@#%' + numIngs[i] + '@%';
-  }
-  _numFiles++;
-  listFileNames.add('GroceryList_$_numFiles')
-  return grocerylistfile
-      .writeAsString('title: $title, day: $day, ingredients: $ings');
 }
