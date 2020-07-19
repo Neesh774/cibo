@@ -254,6 +254,30 @@ class GroceryListPage extends StatelessWidget {
     String listday = list._reminderDay;
     List<String> listIngs = list.ingredients;
     List<int> listNumIngs = list.numIngs;
+    List<Color> selectedDayColor = [
+      Colors.black,
+      Colors.black,
+      Colors.black,
+      Colors.black,
+      Colors.black,
+      Colors.black,
+      Colors.black
+    ];
+    if (listday == 'Sunday') {
+      selectedDayColor[0] = Colors.greenAccent;
+    } else if (listday == 'Monday') {
+      selectedDayColor[1] = Colors.greenAccent;
+    } else if (listday == 'Tuesday') {
+      selectedDayColor[2] = Colors.greenAccent;
+    } else if (listday == 'Wednesday') {
+      selectedDayColor[3] = Colors.greenAccent;
+    } else if (listday == 'Thursday') {
+      selectedDayColor[4] = Colors.greenAccent;
+    } else if (listday == 'Friday') {
+      selectedDayColor[5] = Colors.greenAccent;
+    } else if (listday == 'Saturday') {
+      selectedDayColor[6] = Colors.greenAccent;
+    }
     return Scaffold(
         appBar: AppBar(
           title: Text("$listTitle"),
@@ -266,7 +290,7 @@ class GroceryListPage extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Container(
-                    padding: EdgeInsets.only(top: 40),
+                    padding: EdgeInsets.only(top: 25),
                     child: Column(
                       children: <Widget>[
                         Column(
@@ -274,22 +298,78 @@ class GroceryListPage extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Icon(Icons.check_box_outline_blank,
-                                    color: Colors.grey, size: 45),
-                                Icon(Icons.check_box_outline_blank,
-                                    color: Colors.grey, size: 45),
-                                Icon(Icons.check_box_outline_blank,
-                                    color: Colors.grey, size: 45),
-                                Icon(Icons.check_box_outline_blank,
-                                    color: Colors.grey, size: 45),
-                                Icon(Icons.check_box_outline_blank,
-                                    color: Colors.grey, size: 45),
-                                Icon(Icons.check_box_outline_blank,
-                                    color: Colors.grey, size: 45),
-                                Icon(Icons.check_box_outline_blank,
-                                    color: Colors.grey, size: 45),
+                                Column(
+                                  children: <Widget>[
+                                    Text('S',
+                                        style: GoogleFonts.biryani(
+                                            fontSize: 22.5,
+                                            color: selectedDayColor[0])),
+                                    Icon(Icons.check_box_outline_blank,
+                                        color: Colors.white, size: 45),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text('M',
+                                        style: GoogleFonts.biryani(
+                                            fontSize: 22.5,
+                                            color: selectedDayColor[1])),
+                                    Icon(Icons.check_box_outline_blank,
+                                        color: Colors.white, size: 45),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text('T',
+                                        style: GoogleFonts.biryani(
+                                            fontSize: 22.5,
+                                            color: selectedDayColor[2])),
+                                    Icon(Icons.check_box_outline_blank,
+                                        color: Colors.white, size: 45),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text('W',
+                                        style: GoogleFonts.biryani(
+                                            fontSize: 22.5,
+                                            color: selectedDayColor[3])),
+                                    Icon(Icons.check_box_outline_blank,
+                                        color: Colors.white, size: 45),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text('T',
+                                        style: GoogleFonts.biryani(
+                                            fontSize: 22.5,
+                                            color: selectedDayColor[4])),
+                                    Icon(Icons.check_box_outline_blank,
+                                        color: Colors.white, size: 45),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text('F',
+                                        style: GoogleFonts.biryani(
+                                            fontSize: 22.5,
+                                            color: selectedDayColor[5])),
+                                    Icon(Icons.check_box_outline_blank,
+                                        color: Colors.white, size: 45),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text('S',
+                                        style: GoogleFonts.biryani(
+                                            fontSize: 22.5,
+                                            color: selectedDayColor[6])),
+                                    Icon(Icons.check_box_outline_blank,
+                                        color: Colors.white, size: 45),
+                                  ],
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         )
                       ],
