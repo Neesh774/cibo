@@ -67,16 +67,30 @@ class _ListsPageState extends State<ListsPage>
                             dense: true,
                             trailing: const Icon(Icons.arrow_forward_ios),
                             onTap: () {
+                              List<String> ings = [];
+                              List<int> numIngs = [];
+                              for (int i = 0;
+                                  i < documentSnapshot['ingredients'].length;
+                                  i++) {
+                                ings.add(documentSnapshot['ingredients'][i]);
+                                numIngs.add(documentSnapshot['numIngs'][i]);
+                              }
+                              GroceryList list = new GroceryList(
+                                  documentSnapshot['title'],
+                                  documentSnapshot['reminderDay'],
+                                  ings,
+                                  numIngs);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => GroceryListPage(
-                                            listTitle:
-                                                documentSnapshot['title'],
+                                            list: list,
                                           )));
                             },
                           );
                         }));
+              } else {
+                return Container(width: 0.0, height: 0.0);
               }
             }));
   }
@@ -232,23 +246,58 @@ class NewGroceryList extends State<NewGroceryListWidget> {
 }
 
 class GroceryListPage extends StatelessWidget {
-  final String listTitle;
-  GroceryListPage({@required this.listTitle});
+  final GroceryList list;
+  GroceryListPage({@required this.list});
   @override
   Widget build(BuildContext context) {
+    String listTitle = list.title;
+    String listday = list._reminderDay;
+    List<String> listIngs = list.ingredients;
+    List<int> listNumIngs = list.numIngs;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("$listTitle"),
-      ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            // Navigate back to first route when tapped.
-          },
-          child: Text('Go back!'),
+        appBar: AppBar(
+          title: Text("$listTitle"),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.edit), onPressed: () {})
+          ],
         ),
-      ),
-    );
+        body: StreamBuilder(
+            stream: Firestore.instance.collection("grocerylists").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Container(
+                    padding: EdgeInsets.only(top: 40),
+                    child: Column(
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(Icons.check_box_outline_blank,
+                                    color: Colors.grey, size: 45),
+                                Icon(Icons.check_box_outline_blank,
+                                    color: Colors.grey, size: 45),
+                                Icon(Icons.check_box_outline_blank,
+                                    color: Colors.grey, size: 45),
+                                Icon(Icons.check_box_outline_blank,
+                                    color: Colors.grey, size: 45),
+                                Icon(Icons.check_box_outline_blank,
+                                    color: Colors.grey, size: 45),
+                                Icon(Icons.check_box_outline_blank,
+                                    color: Colors.grey, size: 45),
+                                Icon(Icons.check_box_outline_blank,
+                                    color: Colors.grey, size: 45),
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+                    ));
+              } else {
+                return Container();
+              }
+            }));
   }
 }
 
