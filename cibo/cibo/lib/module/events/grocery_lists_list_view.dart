@@ -105,10 +105,14 @@ class NewGroceryListWidget extends StatefulWidget {
 class NewGroceryList extends State<NewGroceryListWidget> {
   List<String> tempIngredients;
   final curTitle = new TextEditingController();
+  final numOfIngscontroller = new TextEditingController();
   int countings = 0;
   List<String> finalIngs = [];
   List<int> numfinalIngs = [];
   String _reminderDay = "Sunday";
+  int numOfIngs = 0;
+  TextEditingController controller = new TextEditingController();
+  TextEditingController numcontroller = new TextEditingController();
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -153,11 +157,11 @@ class NewGroceryList extends State<NewGroceryListWidget> {
                     int tempnum = numfinalIngs[i];
                     tempNumIngs.add(tempnum);
                   }
+                  debugPrint('$tempIngs');
+                  debugPrint('$tempNumIngs');
                   GroceryList cur = GroceryList(
                       curTitle.text, _reminderDay, tempIngs, tempNumIngs);
                   final db = Firestore.instance;
-                  debugPrint('$tempIngs');
-                  debugPrint('$tempNumIngs');
                   await db.collection('grocerylists').add({
                     'title': cur.title,
                     'reminderDay': cur._reminderDay,
@@ -224,21 +228,64 @@ class NewGroceryList extends State<NewGroceryListWidget> {
               ),
               Row(
                 children: <Widget>[
-                  Text(
-                      'Ingredients                                                                     ',
-                      style: GoogleFonts.biryani(fontSize: 15.0)),
-                  IconButton(
-                    icon: new Icon(Icons.add),
-                    onPressed: () {
-                      setState(() {
-                        countings++;
-                      });
-                    },
-                  )
+                  SizedBox(
+                    width: 75,
+                    height: 50,
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      controller: numOfIngscontroller,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: '#',
+                          hintText: '#'),
+                      onSubmitted: (numIngredients) {
+                        debugPrint(numIngredients);
+                        setState(() {
+                          numOfIngs = int.parse(numIngredients);
+                        });
+                      },
+                    ),
+                  ),
+                  Text('   Ingredients',
+                      style: GoogleFonts.biryani(fontSize: 15)),
                 ],
               ),
-              SizedBox(height: 10.0),
-              ListOfIngsWidget(countings, key: UniqueKey())
+              new Expanded(
+                  child: ListView.builder(
+                itemCount: numOfIngs,
+                itemBuilder: (BuildContext context, int index) {
+                  int count = index + 1;
+                  return Column(children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 4,
+                          child: TextField(
+                            controller: controller,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Ingredient $count',
+                            ),
+                          ),
+                        ),
+                        Spacer(),
+                        Expanded(
+                          flex: 1,
+                          child: TextField(
+                            controller: numcontroller,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: '#',
+                                labelText: '#'),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                      ],
+                    )
+                  ]);
+                },
+              ))
             ],
           ),
         ));
@@ -294,82 +341,55 @@ class GroceryListPage extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Text('S',
-                                        style: GoogleFonts.biryani(
-                                            fontSize: 22.5,
-                                            color: selectedDayColor[0])),
-                                    Icon(Icons.check_box_outline_blank,
-                                        color: Colors.white, size: 45),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Text('M',
-                                        style: GoogleFonts.biryani(
-                                            fontSize: 22.5,
-                                            color: selectedDayColor[1])),
-                                    Icon(Icons.check_box_outline_blank,
-                                        color: Colors.white, size: 45),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Text('T',
-                                        style: GoogleFonts.biryani(
-                                            fontSize: 22.5,
-                                            color: selectedDayColor[2])),
-                                    Icon(Icons.check_box_outline_blank,
-                                        color: Colors.white, size: 45),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Text('W',
-                                        style: GoogleFonts.biryani(
-                                            fontSize: 22.5,
-                                            color: selectedDayColor[3])),
-                                    Icon(Icons.check_box_outline_blank,
-                                        color: Colors.white, size: 45),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Text('T',
-                                        style: GoogleFonts.biryani(
-                                            fontSize: 22.5,
-                                            color: selectedDayColor[4])),
-                                    Icon(Icons.check_box_outline_blank,
-                                        color: Colors.white, size: 45),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Text('F',
-                                        style: GoogleFonts.biryani(
-                                            fontSize: 22.5,
-                                            color: selectedDayColor[5])),
-                                    Icon(Icons.check_box_outline_blank,
-                                        color: Colors.white, size: 45),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Text('S',
-                                        style: GoogleFonts.biryani(
-                                            fontSize: 22.5,
-                                            color: selectedDayColor[6])),
-                                    Icon(Icons.check_box_outline_blank,
-                                        color: Colors.white, size: 45),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(
+                                    width: 275,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text('S',
+                                            style: GoogleFonts.biryani(
+                                                fontSize: 22.5,
+                                                color: selectedDayColor[0])),
+                                        Spacer(),
+                                        Text('M',
+                                            style: GoogleFonts.biryani(
+                                                fontSize: 22.5,
+                                                color: selectedDayColor[1])),
+                                        Spacer(),
+                                        Text('T',
+                                            style: GoogleFonts.biryani(
+                                                fontSize: 22.5,
+                                                color: selectedDayColor[2])),
+                                        Spacer(),
+                                        Text('W',
+                                            style: GoogleFonts.biryani(
+                                                fontSize: 22.5,
+                                                color: selectedDayColor[3])),
+                                        Spacer(),
+                                        Text('T',
+                                            style: GoogleFonts.biryani(
+                                                fontSize: 22.5,
+                                                color: selectedDayColor[4])),
+                                        Spacer(),
+                                        Text('F',
+                                            style: GoogleFonts.biryani(
+                                                fontSize: 22.5,
+                                                color: selectedDayColor[5])),
+                                        Spacer(),
+                                        Text('S',
+                                            style: GoogleFonts.biryani(
+                                                fontSize: 22.5,
+                                                color: selectedDayColor[6])),
+                                      ],
+                                    ),
+                                  )
+                                ]),
                           ],
                         )
                       ],
@@ -378,6 +398,43 @@ class GroceryListPage extends StatelessWidget {
                 return Container();
               }
             }));
+  }
+}
+
+class ListOfIngs extends StatelessWidget {
+  @override
+  ListOfIngs(TextEditingController controller,
+      TextEditingController numcontroller, int i);
+  Widget build(BuildContext context) {
+    TextEditingController controller;
+    TextEditingController numcontroller;
+    int i;
+    debugPrint('recieved');
+    return SizedBox(
+      width: 300,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Ingredient $i',
+              ),
+              onSubmitted: (ing) {
+                _newListIngs.add(controller);
+              }),
+          TextField(
+              controller: numcontroller,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(), hintText: '#', labelText: '#'),
+              keyboardType: TextInputType.number,
+              onSubmitted: (numIng) {
+                _newlistnumIngs.add(numcontroller);
+              }),
+        ],
+      ),
+    );
   }
 }
 
@@ -394,69 +451,23 @@ class GroceryList {
   );
 }
 
-class ListOfIngsWidget extends StatefulWidget {
-  final int countIngs;
+class Drawhorizontalline extends CustomPainter {
+  Paint _paint;
 
-  const ListOfIngsWidget(this.countIngs, {Key key}) : super(key: key);
-
-  @override
-  _ListOfIngsState createState() => _ListOfIngsState();
-}
-
-class _ListOfIngsState extends State<ListOfIngsWidget> {
-  List<TextEditingController> _controllerList = [];
-  List<TextEditingController> _numControllerList = [];
-  List<Widget> _ingList = [];
-
-  @override
-  void initState() {
-    for (int i = 1; i <= widget.countIngs; i++) {
-      TextEditingController controller = TextEditingController();
-      TextField textField = TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Ingredient $i',
-        ),
-      );
-      TextEditingController numcontroller = TextEditingController();
-      TextField numField = TextField(
-        controller: numcontroller,
-        decoration: InputDecoration(
-            border: OutlineInputBorder(), hintText: '#', labelText: '#'),
-        keyboardType: TextInputType.number,
-      );
-      _ingList.add(Row(
-        children: <Widget>[
-          Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: SizedBox(
-                width: 250,
-                child: textField,
-              )),
-          Text('x', style: GoogleFonts.biryani(fontSize: 15)),
-          Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: SizedBox(
-                width: 75,
-                child: numField,
-              ))
-        ],
-      ));
-      _controllerList.add(controller);
-      _numControllerList.add(numcontroller);
-      _newListIngs.add(controller);
-      _newlistnumIngs.add(numcontroller);
-    }
-    super.initState();
+  Drawhorizontalline() {
+    _paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1
+      ..strokeCap = StrokeCap.round;
   }
 
   @override
-  Widget build(BuildContext context) {
-    return new Container(
-      child: Flexible(
-        child: ListView(children: _ingList),
-      ),
-    );
+  void paint(Canvas canvas, Size size) {
+    canvas.drawLine(Offset(-90.0, 0.0), Offset(90.0, 0.0), _paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }
